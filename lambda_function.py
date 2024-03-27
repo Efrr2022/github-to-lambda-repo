@@ -276,6 +276,7 @@ def modify_user(userId, updateKey, updateValue):
    body = {
       'Operation': 'Update',
       'Message': 'SUCCESS',
+      'User': result
     }
    status_code = 200
   else:
