@@ -61,6 +61,8 @@ def lambda_handler(event, context):
     response = save_user(body)
   elif http_method == 'PATCH' and path == user_path:
     body = json.loads(event['body'])
+    print(body['updateKey'])
+    print(body['updateValue'])
     response = modify_user(body['userId'],body['updateKey'],body['updateValue'])
 
   elif http_method == 'GET' and path == expenses_monthly:
@@ -259,7 +261,9 @@ def save_user(request_body):
   
 ############################## Function For updater User #################################################
 def modify_user(userId, updateKey, updateValue):
-  sql = f"Update users Set {updateKey}={updateValue} where userID={userId};"
+  print(updateKey)
+  print(updateValue)
+  sql = f"UPDATE users SET {updateKey}={updateValue} WHERE userID={userId};"
   mycursor.execute(sql)
   mydb.commit()
 
