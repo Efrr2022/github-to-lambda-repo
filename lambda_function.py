@@ -263,22 +263,28 @@ def save_user(request_body):
 def modify_user(userId, updateKey, updateValue):
   print(updateKey)
   print(updateValue)
-  sql = f"UPDATE users SET {updateKey}={updateValue} WHERE userID={userId};"
-  print(sql)
-  mycursor.execute(sql)
-  mydb.commit()
   sql = f"select * from users where userId={userId}"
   mycursor.execute(sql)
   result = mycursor.fetchone()
-
-  body = {
+  if result:
+   sql = f"UPDATE users SET {updateKey}={updateValue} WHERE userID={userId};"
+   mycursor.execute(sql)
+   mydb.commit()
+   sql = f"select * from users where userId={userId}"
+   mycursor.execute(sql)
+   result = mycursor.fetchone()
+   body = {
       'Operation': 'Update',
       'Message': 'SUCCESS',
-      "User": result
-      
-  }
+    }
+   status_code = 200
+  else:
+    body = {
+      f'Message': 'User With Id={userId} not found'
+    }
+    status_code = 204
 
-  return build_response(200, body)
+  return build_response(status_code, body)
 
 
 
