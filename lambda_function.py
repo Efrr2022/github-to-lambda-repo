@@ -268,7 +268,8 @@ def modify_user(userId, updateKey, updateValue):
   mycursor.execute(sql)
   mydb.commit()
   sql = f"select * from users where userId={userId}"
-  result = mycursor.fetchone(sql)
+  mycursor.execute(sql)
+  result = mycursor.fetchone()
 
   body = {
       'Operation': 'Update',
