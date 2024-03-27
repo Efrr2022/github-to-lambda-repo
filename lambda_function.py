@@ -1,6 +1,7 @@
 import json
 import mysql.connector
 import datetime 
+from botocore.exceptions import ClientError
 
 # resources comes from API Gateway
 status_check_path = '/status'
@@ -54,7 +55,13 @@ def lambda_handler(event, context):
     print(user_id)
     response = get_user(user_id)
   elif http_method == 'POST' and path == user_path:
-    response = save_user(json.load(event['body']))
+    
+    body =json.loads(event['body'])
+    print(body)
+    response = save_user(body)
+  elif http_method == 'PATCH' and path == user_path:
+    body = json.loads(event['body'])
+    response = modify_user(body['userId'],body['updateKey'],body['updateValue'])
 
   elif http_method == 'GET' and path == expenses_monthly:
     if event['queryStringParameters'] == None:
@@ -213,6 +220,8 @@ def get_monthly_report(monthName):
 
 ############################## Function for for saving User to the database #############################
 def save_user(request_body):
+  print(request_body)
+  print("11111111111111")
   try:
     # To check Wether table users is available or not
     stmt = "SHOW TABLES LIKE 'users'"
@@ -224,8 +233,10 @@ def save_user(request_body):
     if result:
      for x in request_body:
       val.append((x["name"], x["email"], x["address"], x["phone"]),)
+      print(val)
      # Sql statement to insert data to the database  
      sql="Insert into users (full_name,email,Address,phone_no) values (%s, %s, %s, %s)"
+     print("11111111111111")
      mycursor.executemany(sql,val)
      mydb.commit()  
     # If table Users not found 
@@ -239,12 +250,28 @@ def save_user(request_body):
       'Message': 'SUCCESS',
       'Item': request_body
     }
-    return build_response(200,body)
+    return build_response(201,body)
   except ClientError as e:
     return build_response(400, e.response['Error']['Message'])
 
 
 ############################## End of function save_user(body)###########################################
+  
+############################## Function For updater User #################################################
+def modify_user(userId, updateKey, updateValue):
+  sql = f"Update users Set {updateKey}={updateValue} where userID={userId};"
+  mycursor.execute(sql)
+  mydb.commit()
+
+  body = {
+      'Operation': 'Update',
+      'Message': 'SUCCESS'
+      
+  }
+
+  return build_response(200, body)
+
+
 
 ############################## Function for building responses to API #######################################
 def build_response(status_code, body):
