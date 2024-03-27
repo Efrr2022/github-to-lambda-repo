@@ -214,11 +214,26 @@ def get_monthly_report(monthName):
 ############################## Function for for saving User to the database #############################
 def save_user(request_body):
   try:
-    # sql statement to insert data to the table users
-    sql="Insert into users (full_name,email,Address,phone_no) values (%s, %s, %s, %s)"
-    # save changes made
-    mycursor.executemany(sql,request_body)
-    mydb.commit()
+    # To check Wether table users is available or not
+    stmt = "SHOW TABLES LIKE 'users'"
+    mycursor.execute(stmt)
+    result = mycursor.fetchone()
+
+    # To prepare to the value to insert to the database 
+    val = []
+    if result:
+     for x in request_body:
+      val.append((x["name"], x["email"], x["address"], x["phone"]),)
+     # Sql statement to insert data to the database  
+     sql="Insert into users (full_name,email,Address,phone_no) values (%s, %s, %s, %s)"
+     mycursor.executemany(sql,val)
+     mydb.commit()  
+    # If table Users not found 
+    else:
+     body = "Table users doesn't found"
+    
+    
+    
     body = {
       'Operation': 'SAVE',
       'Message': 'SUCCESS',
