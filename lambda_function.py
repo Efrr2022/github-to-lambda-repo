@@ -64,6 +64,9 @@ def lambda_handler(event, context):
     print(body['updateKey'])
     print(body['updateValue'])
     response = modify_user(body['userId'],body['updateKey'],body['updateValue'])
+  elif http_method == 'DELETE' and path == user_path:
+    id = event['queryStringParameters']['id']
+    response = delete_user(id)
 
   elif http_method == 'GET' and path == expenses_monthly:
     if event['queryStringParameters'] == None:
@@ -290,6 +293,28 @@ def modify_user(userId, updateKey, updateValue):
 
 
 ############################## Function for building responses to API #######################################
+
+############################## Function to delete a user ##################################################
+def delete_user(id):
+  sql = f"select * from users where userId={id}"
+  mycursor.execute(sql)
+  result = mycursor.fetchone()
+  if result:
+   sql = f"Delete from users WHERE userId={id}"
+   mycursor.execute(sql)
+   mydb.commit
+   body = {
+      'Operation': 'DELETE',
+      'Message': 'SUCCESS',
+    }
+   status_code = 200
+  else:
+   body = {
+    'Message': 'user not found'
+   }
+  status_code = 204
+  return build_response(status_code, body)
+############################## End of delete_user Function ################################################
 def build_response(status_code, body):
     return {
      "statusCode": status_code,
