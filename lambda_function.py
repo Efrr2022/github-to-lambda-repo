@@ -264,6 +264,7 @@ def modify_user(userId, updateKey, updateValue):
   print(updateKey)
   print(updateValue)
   sql = f"UPDATE users SET {updateKey}={updateValue} WHERE userID={userId};"
+  print(sql)
   mycursor.execute(sql)
   mydb.commit()
 
