@@ -2,11 +2,11 @@ import json
 import mysql.connector
 import datetime 
 from botocore.exceptions import ClientError
-from config.py import secret
-host_url = secret.host
-user_name = secret.user
-password_database= secret.password
-database_dev = secret.database
+import config 
+host_url = config.secret.host
+user_name = config.secret.user
+password_database= config.secret.password
+database_dev = config.secret.database
 # resources comes from API Gateway
 status_check_path = '/status'
 users_path = '/users'
