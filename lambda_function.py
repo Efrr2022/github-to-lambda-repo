@@ -2,7 +2,11 @@ import json
 import mysql.connector
 import datetime 
 from botocore.exceptions import ClientError
-
+from config.py import secret
+host_url = secret.host
+user_name = secret.user
+password_database= secret.password
+database_dev = secret.database
 # resources comes from API Gateway
 status_check_path = '/status'
 users_path = '/users'
@@ -14,10 +18,15 @@ user_expenses = '/user/expenses'
 
 # Credentials for connecting to the database 
 mydb= mysql.connector.connect(
-    host="tectown-backend-q1-2024.c1s0muoa0qc4.us-east-1.rds.amazonaws.com",
-    user="admin",
-    password="Tectown1!",
-    database="efrem_tectown"
+    host = host_url,
+    user = user_name,
+    password = password_database,
+    database = database_dev
+
+    #host="tectown-backend-q1-2024.c1s0muoa0qc4.us-east-1.rds.amazonaws.com",
+    #user="admin",
+    #password="Tectown1!",
+    #database="efrem_tectown"
     )
 mycursor = mydb.cursor()
 
